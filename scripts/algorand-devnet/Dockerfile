@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:18.04 as builder
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -46,17 +46,27 @@ WORKDIR $SRC_PARENT/indexer
 RUN make
 RUN cp $SRC_PARENT/indexer/cmd/algorand-indexer/algorand-indexer $GOPATH/bin
 
+# TODO: smaller base image
+FROM ubuntu:18.04
+
 # debugger
 WORKDIR /
-RUN apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y --no-install-recommends \
+  ca-certificates=20201027ubuntu0.18.04.1 \
   software-properties-common=0.96.24.32.14 \
   && add-apt-repository -y ppa:plt/racket \
   && apt-get update \
   && apt-get install -y --no-install-recommends \
-  racket=7.8+ppa1-1~bionic1 \
+  racket=7.9+ppa2-1~bionic1 \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 COPY server.rkt /
+
+# Note: ENV does not transfer from one build stage to another
+ENV GOPATH /go
+ENV PATH=$GOPATH/bin:$PATH
+# TODO: be more selective about which bins to copy
+COPY --from=builder $GOPATH/bin $GOPATH/bin
 
 WORKDIR /
 ENV ALGORAND_NETWORK=/var/lib/algorand_network
