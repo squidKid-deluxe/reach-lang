@@ -83,6 +83,7 @@ st2dt = \case
   ST_Tuple tys -> T_Tuple (map st2dt tys)
   ST_Object tyMap -> T_Object (M.map st2dt tyMap)
   ST_Data tyMap -> T_Data (M.map st2dt tyMap)
+  ST_Refined _ ty -> st2dt ty -- XXX this is the only type that "degrades" instead of a 1:1
   -- XXX consider using Maybe so that callers have to handle the error case
   t@(ST_Fun {}) -> error $ "ST_Fun not a dt: " <> show t
   t@(ST_Forall {}) -> error $ "ST_Forall not a dt: " <> show t

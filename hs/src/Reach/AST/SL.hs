@@ -36,6 +36,7 @@ data SLVal
   | SLV_Object SrcLoc (Maybe String) SLEnv
   | SLV_Clo SrcLoc (Maybe SLVar) [JSExpression] JSBlock SLCloEnv
   | SLV_Data SrcLoc (M.Map SLVar SLType) SLVar SLVal
+  | SLV_Refined SrcLoc SLVal SrcLoc SLVal -- val, clo
   | SLV_DLC DLConstant
   | SLV_DLVar DLVar
   | SLV_Type SLType
@@ -65,6 +66,7 @@ instance SrcLocOf SLVal where
     SLV_Object a _ _ -> a
     SLV_Clo a _ _ _ _ -> a
     SLV_Data a _ _ _ -> a
+    SLV_Refined a _ _ _ -> a
     SLV_DLVar (DLVar a _ _ _) -> a
     SLV_Participant a _ _ _ -> a
     _ -> srcloc_builtin
@@ -210,6 +212,7 @@ data SLPrimitive
   | SLPrim_Bytes
   | SLPrim_Data
   | SLPrim_Data_variant (M.Map SLVar SLType) SLVar SLType
+  | SLPrim_Refined
   | SLPrim_data_match
   | SLPrim_Array
   | SLPrim_Array_iota

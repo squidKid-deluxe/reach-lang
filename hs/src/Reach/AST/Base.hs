@@ -185,6 +185,7 @@ data SLType
   | ST_Forall SLVar SLType
   | ST_Var SLVar
   | ST_Type SLType
+  | ST_Refined SLVar SLType -- var points to the predicate
   deriving (Eq, Generic, NFData, Ord)
 
 -- | Fold over SLType, doing something special on Fun
@@ -211,6 +212,7 @@ funFold z k fun = go
       ST_Forall _ ty -> go ty
       ST_Var _ -> z
       ST_Type _ -> z
+      ST_Refined _ ty -> go ty -- refined fn types exist?
 
 -- | True if the type is a Fun, or
 -- is a container/forall type with Fun somewhere inside
@@ -253,7 +255,7 @@ instance Show SLType where
   show (ST_Forall x t) = "Forall(" <> show x <> ", " <> show t <> ")"
   show (ST_Var x) = show x
   show (ST_Type ty) = "Type(" <> show ty <> ")"
-
+  show (ST_Refined var ty) = "Refined(" <> show ty <> ", " <> var <> ")"
 
 type SLPart = B.ByteString
 

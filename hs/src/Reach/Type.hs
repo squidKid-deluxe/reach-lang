@@ -124,6 +124,7 @@ typeSubst at env ty =
               iter var_ty
     ST_Forall _ _ ->
       impossible $ "typeSubst: forall in output"
+    ST_Refined t -> iter t -- XXX -- ST_Refined <$> iter t
     _ -> return ty
   where
     iter = typeSubst at env
@@ -147,6 +148,8 @@ typeCheck_help mcfs at env ty val val_ty res =
               return res
             Just var_ty ->
               typeCheck_help mcfs at env var_ty val val_ty res
+    (_, ST_Refined ty') ->
+      typeCheck_help mcfs at env ty' val val_ty res
     (_, _) ->
       typeMeet mcfs at (at, val_ty) (at, (st2dt ty)) `seq` return res
 
@@ -209,6 +212,9 @@ slToDL pdvs _at v =
     SLV_Clo _ _ _ _ _ -> Nothing
     SLV_Data at' t vn sv ->
       DLAE_Data (M.map st2dt t) vn <$> slToDL pdvs at' sv
+    SLV_Refined vat vv _cat _c ->
+      -- XXX: use c
+      slToDL pdvs vat vv
     SLV_DLC c -> return $ DLAE_Arg $ DLA_Constant c
     SLV_DLVar dv -> return $ DLAE_Arg $ DLA_Var dv
     SLV_Type _ -> Nothing

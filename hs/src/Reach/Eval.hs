@@ -594,6 +594,7 @@ base_env =
     , ("Address", SLV_Type ST_Address)
     , ("forall", SLV_Prim SLPrim_forall)
     , ("Data", SLV_Prim SLPrim_Data)
+    , ("Refined", SLV_Prim SLPrim_Refined)
     , ("Array", SLV_Prim SLPrim_Array)
     , ("array", SLV_Prim SLPrim_array)
     , ("Tuple", SLV_Prim SLPrim_Tuple)
@@ -2120,6 +2121,12 @@ evalPrim ctxt at sco st p sargs =
       SLRes a_lifts a_st (SLAppRes _ ans) <-
         evalApplyVals ctxt at sco st fn [public obj, public cases]
       return $ SLRes a_lifts a_st ans
+    SLPrim_Refined -> do
+      let (ty_, _clo) = two_args
+      let ty = expect_ty ty_
+      -- TODO: gensym a SLVar and associate it with _clo?
+      retV $ (lvl, SLV_Type $ ST_Refined ty)
+
   where
     lvl = mconcatMap fst sargs
     args = map snd sargs
