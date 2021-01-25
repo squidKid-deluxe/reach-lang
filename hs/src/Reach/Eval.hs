@@ -2142,8 +2142,9 @@ evalPrim ctxt at sco st p sargs =
     SLPrim_Refined -> do
       let (ty_, _clo) = two_args
       let ty = expect_ty ty_
-      -- TODO: gensym a SLVar and associate it with _clo?
-      retV $ (lvl, SLV_Type $ ST_Refined ty)
+      -- TODO: gensym a var and associate it with _clo
+      (lifts, clo_da) <- pure (mempty, "XXX eval ")
+      keepLifts lifts $ retV (lvl, SLV_Type $ ST_Refined clo_da ty)
 
   where
     lvl = mconcatMap fst sargs
