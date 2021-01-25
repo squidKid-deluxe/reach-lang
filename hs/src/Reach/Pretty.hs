@@ -65,6 +65,7 @@ instance Pretty SLVal where
     SLV_Object _ _ m -> render_obj m
     SLV_Clo {} -> "<closure>"
     SLV_Data _ _ vn vv -> "<" <> pretty vn <> " " <> pretty vv <> ">"
+    SLV_Refined _ v _ _ -> "<refined: " <> pretty v <> ">"
     SLV_DLC c -> "<constant: " <> viaShow c <> ">"
     SLV_DLVar v -> pretty v
     SLV_Type t -> "<type: " <> pretty t <> ">"

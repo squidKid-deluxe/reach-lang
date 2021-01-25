@@ -81,6 +81,7 @@ st2dt = \case
   ST_Tuple tys -> T_Tuple <$> traverse st2dt tys
   ST_Object tyMap -> T_Object <$> traverse st2dt tyMap
   ST_Data tyMap -> T_Data <$> traverse st2dt tyMap
+  ST_Refined _ t -> st2dt t
   ST_Fun {} -> Nothing
   ST_Forall {} -> Nothing
   ST_Var {} -> Nothing
