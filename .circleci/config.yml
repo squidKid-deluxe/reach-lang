@@ -22,6 +22,7 @@ jobs:
       - <<: *docker-image
     steps:
       - checkout
+      - setup_remote_docker
       - run:
           name: intentionally fail immediately
           command: exit 1
