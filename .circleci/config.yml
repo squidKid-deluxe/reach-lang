@@ -23,6 +23,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: intentionally fail immediately
+          command: exit 1
+      - run:
           name: install mo
           command: (curl -sSL https://git.io/get-mo -o mo && chmod +x mo && mv mo /usr/local/bin)
       - run:
